@@ -238,11 +238,5 @@ moduleJs.extend({
 				return this;
 			}
 		}
-	},
-	
-	//a helper function for getting all of namespaces
-	getNamespaces: function() {
-		return moduleJs.nameSpaces;
 	}
-
 }, moduleJs);
