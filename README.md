@@ -1,5 +1,6 @@
 module.js
 =========
+
 A simple JavaScript that makes modular programming easier than usual!
 With module.js you can:
 Easily create a modular application
