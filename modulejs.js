@@ -157,7 +157,6 @@ moduleJs.extend({
 		if (typeof callback == "function") {
 			if (moduleJs.isArray(obj)) {
 				for (i = 0; i < obj.length; i++) {
-						//console.log(obj.length);
 					if (callback.call(obj[i], i, obj[i]) === false) {
 						break;//break if the call result is a breaker
 					}
