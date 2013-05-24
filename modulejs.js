@@ -27,14 +27,13 @@ moduleJs.core = moduleJs.prototype = {
 		var ns = new Object();
 		var libs = [];
 		//bind modules to the namespace
-		// if ( moduleJs.modules["test"]) console.log(requestedPlugings);
 		if (typeof requestedPlugings === "string") {
 			requestedPlugings = moduleJs.trim(requestedPlugings);
 			
-			if (requestedPlugings === "*") {
-				moduleJs.foreach(moduleJs.modules, function(){
-					libs.push(moduleJs.modules);
-				});
+			if (requestedPlugings == "*") {
+				for (var moduleId in moduleJs.modules) {
+					libs.push(moduleId);
+				}
 			} else {
 				if (moduleJs.modules[requestedPlugings]) {
 					libs.push(requestedPlugings);
@@ -47,19 +46,23 @@ moduleJs.core = moduleJs.prototype = {
 				}
 			});
 		}
+		
 		//load modules
-		moduleJs.foreach(libs, function(moduleIndex, moduleName) {
-			if (moduleJs.modules[moduleName]) {
+		for (var moduleIndex in libs) {
+			var moduleName = libs[moduleIndex];
+			if (moduleJs.modules[moduleName] && !ns[moduleName]) {
 				moduleJs.modules[moduleName].execute();
-				moduleJs.extend(moduleName, moduleJs.modules[moduleName].execute, ns);
+				var obj = new Object();
+				obj[moduleName] = moduleJs.modules[moduleName];
+				moduleJs.extend(obj, ns);
 			}
-		});
+		}
 		
 		moduleJs.nameSpaces[namespace] = ns;
 		
 		var load = function(callback) {
 			if (typeof callback === "function") {
-				callback.apply(ns, [moduleJs]);
+				callback.apply(ns, [ns]);
 			}
 		};
 		// badan bayad namespace ro ham set konam
@@ -88,37 +91,34 @@ moduleJs.core = moduleJs.prototype = {
 	}
 };
 moduleJs.core.loader.prototype = moduleJs.core;
-/**
- * ========= var a = {}; moduleJs.extend({name: 'John Doe'}, a) -> copy the first
- * object to 'a' ======== moduleJs.extend("test", function(){alert(123);}, moduleJs.core} ->
- * add test function to moduleJs.core object
- * 
- * @returns {Function}
- */
+
+//Special thanks to jQuery...
 moduleJs.extend = moduleJs.core.extend = function() {
 	var args = arguments;
-	if (typeof args[0] !== "undefined") {
+	if (args[0]) {
 		if (typeof args[0] === "object") {
 			// we should loop throw it to extend all of item inside it
 
 			var dest = false;
-
-			if (typeof args[1] !== "undefined") {
-				dest = true;
-			}
-
-			for ( var item in args[0]) {
-				if (dest === true) {
+			
+			if (args[1]) {
+				for ( var item in args[0]) {
 					args[1][item] = args[0][item];// copy to the destination
 				}
 			}
-		} else if (typeof args[0] === "string" && typeof args[1] === "function") {
+			
+		} else if (typeof args[0] === "string" && 
+				typeof args[1] === "function" && 
+				typeof args[2] == "object") {
 			args[2][args[0]] = args[1];
 		}
 	}
 
 	return moduleJs;
 };
+
+
+
 moduleJs.extend({
 	//check the existence of a needle on a haystack
 	inArray : function(needle, haystack) {
@@ -190,7 +190,7 @@ moduleJs.extend({
 		return moduleJs.arrayKeyValue(data, "values");
 	},
 	
-	//model structure
+	//module structure
 	module: function(options) {
 		moduleJs.modules = moduleJs.modules || {};
 		var extend = function() {
@@ -223,21 +223,27 @@ moduleJs.extend({
 			}, options);
 			
 			moduleJs.modules[options.moduleName] = options;
+			
+			return true;
 		};
 		
 		return {
 			extend: extend,
 			
 			unset: function() {
-				if (typeof options === "string") {
-					if (moduleJs.modules[options]) {
-						delete moduleJs.modules[options];
+				if (options.moduleName) {
+					if (moduleJs.modules[options.moduleName]) {
+						delete moduleJs.modules[options.moduleName];
 					}
 				}
 				return this;
 			}
 		}
-		
+	},
+	
+	//a helper function for getting all of namespaces
+	getNamespaces: function() {
+		return moduleJs.nameSpaces;
 	}
 
 }, moduleJs);

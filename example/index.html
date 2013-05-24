@@ -1,0 +1,66 @@
+<html>
+
+<head>
+<script type="text/javascript" src="../module.js"></script>
+</head>
+
+<body>
+
+<script>
+moduleJs.module({
+	moduleName: "test",
+	
+	init: function() {
+		console.log("Module 'test' initialized!");
+	},
+	
+	sayHello: function(name) {
+		alert ("Hello " + name);
+	}
+}).extend();
+
+
+moduleJs.module({
+	moduleName: "math",
+	
+	init: function() {
+		console.log("Module 'math' initialized!");
+	},
+	
+	adder: function(x, y) {
+		alert ("Hello " + name);
+	},
+	
+	divider: function(x, y) {
+		return (x / y) || NaN;
+	}
+}).extend();
+
+moduleJs("main", "*").load(function(nameSpace) {
+	this.test.sayHello ("Denis");
+	//or
+	nameSpace.test.sayHello ("Denis");
+	
+	alert (this.math.divider(2,2));
+	//remove a module
+	moduleJs.module({
+		moduleName: "test"
+	}).unset();
+});
+
+moduleJs("anotherNameSpace", "test", "math").load(function(ns) {
+	//an exception will be thrown because we 
+	//removed test module before the creation of this namespace
+	//this.test.sayHello ("Denis");
+	
+	//get a namespace object
+	var mainNs = moduleJs("main").get();
+	mainNs.test.sayHello("Jay");
+	
+	//remove a namespace
+	moduleJs("main").remove();
+})
+</script>
+</body>
+
+</html>
