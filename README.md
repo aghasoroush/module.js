@@ -8,4 +8,6 @@ Easily create multiple namespaces
 Easily extend the library core
 
 
-Believe me! No manuall, documentation or instruction needed. Just see the examples and start your way!
+## Documentation
+Visit my blog to see the example of usages:
+http://mrkhosravi.ir/posts/modulejs/
