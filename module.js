@@ -65,7 +65,6 @@ moduleJs.core = moduleJs.prototype = {
 				callback.apply(ns, [ns]);
 			}
 		};
-		// badan bayad namespace ro ham set konam
 
 		return {
 			load : load
